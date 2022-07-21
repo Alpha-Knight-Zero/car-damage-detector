@@ -49,7 +49,7 @@ export default function Home() {
 						)}
 					</div>
 				</div>
-				
+				{imageUrl && <button className='button'>Detect Damage</button>}
 			</div>
 		</div>
 	);
