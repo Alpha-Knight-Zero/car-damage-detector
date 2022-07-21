@@ -17,8 +17,6 @@ export default function Home() {
 		}
 	};
 
-	console.log(imageUrl);
-
 	return (
 		<div>
 			<Head>
