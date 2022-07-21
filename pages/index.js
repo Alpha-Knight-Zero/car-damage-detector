@@ -44,8 +44,6 @@ export default function Home() {
 		let url =
 			'https://car-damage-detection1.herokuapp.com/v1/models/car_model:predict';
 
-		console.log(data);
-
 		await axios
 			.request({
 				url: url,
@@ -54,11 +52,28 @@ export default function Home() {
 				headers: headers,
 			})
 			.then((res) => {
-				console.log('Response : ', res);
+				const predictions = res.data.predictions[0];
+
+				showDetections(predictions);
 			})
 			.catch((err) => {
 				console.log('Error : ', err);
 			});
+	};
+
+	const showDetections = (predictions) => {
+		const {
+			num_detections,
+			detection_scores,
+			detection_boxes,
+			detection_classes,
+		} = predictions;
+
+		// console.log('Num detections : ', num_detections);
+		// console.log('Detection scores : ', detection_scores);
+		// console.log('Detection boxes : ', detection_boxes);
+		// console.log('Detection classes : ', detection_classes);
+		
 	};
 
 	return (
@@ -80,19 +95,24 @@ export default function Home() {
 			</div>
 			<div className='mainWrappper'>
 				<div class='mainContent'>
-					<div className='imageHolder'>
-						{imageUrl && (
-							<img
-								src={imageUrl}
-								alt='Upload Preview'
-								crossOrigin='anonymous'
-								ref={imageRef}
-							/>
-						)}
+					<div className='flex col-span-4 imageHolder'>
+						<div>
+							{imageUrl && (
+								<img
+									src={imageUrl}
+									alt='Upload Preview'
+									crossOrigin='anonymous'
+									ref={imageRef}
+								/>
+							)}
+						</div>
 					</div>
 				</div>
 				{imageUrl && (
-					<button className='btn' onClick={processImage}>
+					<button
+						className='px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700'
+						onClick={processImage}
+					>
 						Detect Damage
 					</button>
 				)}
