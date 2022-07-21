@@ -36,6 +36,21 @@ export default function Home() {
 					onChange={uploadImage}
 				></input>
 			</div>
+			<div className='mainWrappper'>
+				<div class='mainContent'>
+					<div className='imageHolder'>
+						{imageUrl && (
+							<img
+								src={imageUrl}
+								alt='Upload Preview'
+								crossOrigin='anonymous'
+								ref={imageRef}
+							/>
+						)}
+					</div>
+				</div>
+				
+			</div>
 		</div>
 	);
 }
