@@ -130,7 +130,6 @@ export default function Home() {
 			}
 
 			setPreds(predss);
-			console.log(preds);
 		}
 	};
 
