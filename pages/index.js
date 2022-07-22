@@ -159,9 +159,6 @@ export default function Home() {
 				<title>Car Damage Detector - by Pushkal Pandey</title>
 			</Head>
 			<div className='flex flex-col items-center col-span-4 space-y-8'>
-				{/* <div className='items-center justify-center space-y-8 text-4xl text-center'>
-					<h1>Car Damage Detector</h1>
-				</div> */}
 				<div>
 					<nav className='bg-white rounded shadow dark:bg-gray-800'>
 						<div className='px-8 mx-auto max-w-7xl'>
