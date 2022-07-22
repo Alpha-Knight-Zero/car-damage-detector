@@ -137,7 +137,6 @@ export default function Home() {
 
 			const predsss = [];
 			for (let i = 0; i < Math.min(2, predss.length); i++) {
-				console.log(predss[scores[i][1]]);
 				if (scores[i][0] > 0.195) {
 					predsss.push(predss[scores[i][1]]);
 				}
