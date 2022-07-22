@@ -2,6 +2,71 @@ import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import axios from 'axios';
+import styled from 'styled-components';
+
+const ObjectDetectorContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+`;
+
+const DetectorContainer = styled.div`
+	min-width: 200px;
+	height: 700px;
+	border: 3px solid #fff;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+`;
+
+const TargetImg = styled.img`
+	height: 100%;
+`;
+
+const HiddenFileInput = styled.input`
+	display: none;
+`;
+
+const SelectButton = styled.button`
+	padding: 7px 10px;
+	border: 2px solid transparent;
+	background-color: #fff;
+	color: #0a0f22;
+	font-size: 16px;
+	font-weight: 500;
+	outline: none;
+	margin-top: 2em;
+	cursor: pointer;
+	transition: all 260ms ease-in-out;
+	&:hover {
+		background-color: transparent;
+		border: 2px solid #fff;
+		color: #fff;
+	}
+`;
+
+const TargetBox = styled.div`
+	position: absolute;
+	left: ${({ x }) => x + 'px'};
+	top: ${({ y }) => y + 'px'};
+	width: ${({ width }) => width + 'px'};
+	height: ${({ height }) => height + 'px'};
+	border: 4px solid #1ac71a;
+	background-color: transparent;
+	z-index: 20;
+	&::before {
+		content: '${({ classType, score }) =>
+			`${classType} ${score.toFixed(1)}%`}';
+		color: #1ac71a;
+		font-weight: 500;
+		font-size: 17px;
+		position: absolute;
+		top: -1.5em;
+		left: -5px;
+	}
+`;
 
 export default function Home() {
 	const [isResultLoading, setIsResultLoading] = useState(false);
@@ -53,6 +118,7 @@ export default function Home() {
 			})
 			.then((res) => {
 				const predictions = res.data.predictions[0];
+				setIsResultLoading(false);
 
 				showDetections(predictions);
 			})
@@ -62,18 +128,19 @@ export default function Home() {
 	};
 
 	const showDetections = (predictions) => {
-		const {
-			num_detections,
-			detection_scores,
-			detection_boxes,
-			detection_classes,
-		} = predictions;
+		if (predictions.length > 0) {
+			const {
+				num_detections,
+				detection_scores,
+				detection_boxes,
+				detection_classes,
+			} = predictions;
 
-		// console.log('Num detections : ', num_detections);
-		// console.log('Detection scores : ', detection_scores);
-		// console.log('Detection boxes : ', detection_boxes);
-		// console.log('Detection classes : ', detection_classes);
-		
+			// console.log('Num detections : ', num_detections);
+			// console.log('Detection scores : ', detection_scores);
+			// console.log('Detection boxes : ', detection_boxes);
+			// console.log('Detection classes : ', detection_classes);
+		}
 	};
 
 	return (
