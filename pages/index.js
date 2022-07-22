@@ -136,8 +136,10 @@ export default function Home() {
 			scores.sort((a, b) => b[0] - a[0]);
 
 			const predsss = [];
-			for (let i = 0; i < Math.min(2, predss.length); i++) {
-				predsss.push(predss[scores[i][1]]);
+			for (let i = 0; i < Math.min(3, predss.length); i++) {
+				if (predss[i][0] >= 0.25) {
+					predsss.push(predss[scores[i][1]]);
+				}
 			}
 
 			setPreds(predsss);
