@@ -17,8 +17,8 @@ const TargetBox = styled.div`
 	z-index: 20;
 	&::before {
 		content: '${({ classType, score }) =>
-			`${classType} ${score.toFixed(1)}%`}';
-		color: #8b0000;
+			`${classType} ${score.toFixed(2)}%`}';
+		color: #58cd36;
 		font-weight: 500;
 		font-size: 27px;
 		position: absolute;
