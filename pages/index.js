@@ -220,6 +220,8 @@ export default function Home() {
 						Doing this is <b>ESSENTIAL</b> and will make sure that
 						the project can access the backend withour encountering
 						CORS-related issues.
+						<br/>
+						Do not forget to <b>TURN IT OFF </b> afterwards as it can cause security lapses on your part.
 					</h1>
 				</div>
 				<div className='flex justify-end space-x-10'>
