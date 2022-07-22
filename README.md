@@ -1,6 +1,6 @@
 This Project has been deployed live at [http://car-damage-detector.vercel.app/](http://car-damage-detector.vercel.app/).
 
-The live website requires that you install the "Moesif Origin & CORS Changer" on your browser from the Chrome Web Store and then enable it. Doing this will make sure that the project can access the backend withour encountering CORS-related issues.
+The live website requires that you install the "Moesif Origin & CORS Changer" web extension on your browser from the Chrome Web Store and then enable it. Doing this will make sure that the project can access the backend withour encountering CORS-related issues.
 
 You can also run this on your local machine by following the instructions given below.
 
