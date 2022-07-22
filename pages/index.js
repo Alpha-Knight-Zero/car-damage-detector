@@ -16,9 +16,9 @@ const TargetBox = styled.div`
 	&::before {
 		content: '${({ classType, score }) =>
 			`${classType} ${score.toFixed(1)}%`}';
-		color: #1ac71a;
+		color: #8b0000;
 		font-weight: 500;
-		font-size: 17px;
+		font-size: 27px;
 		position: absolute;
 		top: -1.5em;
 		left: -5px;
@@ -30,6 +30,15 @@ export default function Home() {
 	const [isProcessingImage, setIsProcessingImage] = useState(false);
 	const [imageUrl, setImageUrl] = useState('');
 	const [predictionsReady, setPredictionsReady] = useState(false);
+
+	const [preds, setPreds] = useState([]);
+
+	const classLabels = {
+		1: 'Scratch',
+		2: 'Dent',
+		3: 'Replacement',
+		4: 'Broken Glass',
+	};
 
 	const imageRef = useRef();
 
@@ -86,7 +95,9 @@ export default function Home() {
 	};
 
 	const showDetections = (predictions) => {
+		setIsResultLoading(false);
 		setPredictionsReady(true);
+
 		const {
 			num_detections,
 			detection_scores,
@@ -95,11 +106,40 @@ export default function Home() {
 		} = predictions;
 
 		if (num_detections > 0) {
-			// console.log('Num detections : ', num_detections);
-			// console.log('Detection scores : ', detection_scores);
-			// console.log('Detection boxes : ', detection_boxes);
-			// console.log('Detection classes : ', detection_classes);
+			const predss = [];
+
+			for (let i = 0; i < num_detections; i++) {
+				if (detection_scores[i] > 0.5) {
+					const ymin = detection_boxes[i][0];
+					const xmin = detection_boxes[i][1];
+					const ymax = detection_boxes[i][2];
+					const xmax = detection_boxes[i][3];
+
+					//normalizing coordinates to fit the image
+					const x = xmin * imageRef.current.width;
+					const width = xmax * imageRef.current.width - x;
+					const y = ymin * imageRef.current.height;
+					const height = ymax * imageRef.current.height - y;
+
+					const classType = detection_classes[i];
+					const score = detection_scores[i];
+
+					predss.push({ x, y, width, height, classType, score });
+				}
+			}
+
+			setPreds(predss);
+			console.log(preds);
 		}
+	};
+
+	const clearSlate = () => {
+		setPreds([]);
+		setImageUrl('');
+		setIsProcessingImage(false);
+		setPredictionsReady(false);
+		setIsResultLoading(false);
+		imageRef = null;
 	};
 
 	return (
@@ -108,8 +148,116 @@ export default function Home() {
 				<title>Car Damage Detector - by Pushkal Pandey</title>
 			</Head>
 			<div className='flex flex-col items-center col-span-4 space-y-8'>
-				<div className='items-center justify-center space-y-8 text-4xl text-center'>
+				{/* <div className='items-center justify-center space-y-8 text-4xl text-center'>
 					<h1>Car Damage Detector</h1>
+				</div> */}
+				<div>
+					<nav className='bg-white rounded shadow dark:bg-gray-800'>
+						<div className='px-8 mx-auto max-w-7xl'>
+							<div className='flex items-center justify-between h-16'>
+								<div className='flex items-center '>
+									<div className='hidden md:block'>
+										<div className='flex items-baseline space-x-4'>
+											<a
+												className='px-3 py-2 text-4xl text-gray-300 rounded-md font-edium hover:text-gray-800 dark:hover:text-white'
+												href='/#'
+											>
+												Car Damage Detector
+											</a>
+										</div>
+									</div>
+								</div>
+								<div className='block'>
+									<div className='flex items-center ml-4 md:ml-6'>
+										<a
+											href='https://github.com/Alpha-Knight-Zero/car-damage-detector'
+											className='p-1 text-gray-400 rounded-full focus:outline-none hover:text-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'
+											target='_blank'
+										>
+											<span className='sr-only'>
+												View github
+											</span>
+											<svg
+												xmlns='http://www.w3.org/2000/svg'
+												width='30'
+												height='30'
+												fill='currentColor'
+												className='text-xl transition-colors duration-200 hover:text-gray-800 dark:hover:text-white'
+												viewBox='0 0 1792 1792'
+											>
+												<path d='M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z'></path>
+											</svg>
+										</a>
+									</div>
+								</div>
+								<div className='flex -mr-2 md:hidden'>
+									<button className='inline-flex items-center justify-center p-2 text-gray-800 rounded-md dark:text-white hover:text-gray-300 focus:outline-none'>
+										<svg
+											width='20'
+											height='20'
+											fill='currentColor'
+											className='w-8 h-8'
+											viewBox='0 0 1792 1792'
+											xmlns='http://www.w3.org/2000/svg'
+										>
+											<path d='M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z'></path>
+										</svg>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div className='md:hidden'>
+							<div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
+								<a
+									className='block px-3 py-2 text-base font-medium text-gray-300 rounded-md hover:text-gray-800 dark:hover:text-white'
+									href='/#'
+								>
+									Home
+								</a>
+								<a
+									className='block px-3 py-2 text-base font-medium text-gray-800 rounded-md dark:text-white'
+									href='/#'
+								>
+									Gallery
+								</a>
+								<a
+									className='block px-3 py-2 text-base font-medium text-gray-300 rounded-md hover:text-gray-800 dark:hover:text-white'
+									href='/#'
+								>
+									Content
+								</a>
+								<a
+									className='block px-3 py-2 text-base font-medium text-gray-300 rounded-md hover:text-gray-800 dark:hover:text-white'
+									href='/#'
+								>
+									Contact
+								</a>
+							</div>
+						</div>
+					</nav>
+				</div>
+
+				<div className='flex justify-end space-x-10'>
+					{imageUrl && (
+						<button
+							onClick={processImage}
+							className='px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700'
+						>
+							{isProcessingImage
+								? 'Processing Image'
+								: isResultLoading
+								? 'Fetching Results'
+								: predictionsReady
+								? 'Showing Predictions'
+								: 'Detect Damage'}
+						</button>
+					)}
+					<button
+						onClick={clearSlate}
+						className='px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700'
+					>
+						Clear
+					</button>
 				</div>
 				<div className='relative flex items-center w-auto h-auto rounded border-y-2 border-x-2 justify-items-center'>
 					{imageUrl && (
@@ -122,44 +270,30 @@ export default function Home() {
 							crossOrigin='anonymous'
 						/>
 					)}
-					{/* {predictionsReady &&
-						predictions.map((prediction, idx) => (
+					{predictionsReady &&
+						preds.map((pred, idx) => (
 							<TargetBox
 								key={idx}
-								x={prediction.bbox[0]}
-								y={prediction.bbox[1]}
-								width={prediction.bbox[2]}
-								height={prediction.bbox[3]}
-								classType={prediction.class}
-								score={prediction.score * 100}
+								x={pred.x}
+								y={pred.y}
+								width={pred.width}
+								height={pred.height}
+								classType={classLabels[pred.classType]}
+								score={pred.score * 100}
 							/>
-						))} */}
+						))}
 				</div>
 				<form>
-					<label class='block'>
-						<span class='sr-only'>Choose Image</span>
+					<label className='block'>
+						<span className='sr-only'>Choose Image</span>
 						<input
 							type='file'
 							accept='image/*'
-							class='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
+							className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
 							onChange={uploadImage}
 						/>
 					</label>
 				</form>
-				{imageUrl && (
-					<button
-						onClick={processImage}
-						className='px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700'
-					>
-						{isProcessingImage
-							? 'Processing Image'
-							: isResultLoading
-							? 'Fetching Results'
-							: predictionsReady
-							? 'Preparing Results'
-							: 'Detect Damage'}
-					</button>
-				)}
 			</div>
 		</div>
 	);
