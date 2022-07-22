@@ -4,6 +4,7 @@ import * as tf from '@tensorflow/tfjs';
 import axios from 'axios';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { minimum } from '@tensorflow/tfjs';
 
 const TargetBox = styled.div`
 	position: absolute;
@@ -58,7 +59,8 @@ export default function Home() {
 
 		const imgTensor = tf.browser.fromPixels(imageRef.current);
 		imgTensor = imgTensor.resizeBilinear([640, 640]);
-
+		//change type to uint8
+		imgTensor = imgTensor.toInt();
 		const imgTensorArray = imgTensor.arraySync();
 
 		fetchImage(imgTensorArray);
@@ -106,30 +108,40 @@ export default function Home() {
 			detection_classes,
 		} = predictions;
 
+		const scores = [];
+
 		if (num_detections > 0) {
 			const predss = [];
 
 			for (let i = 0; i < num_detections; i++) {
-				if (detection_scores[i] > 0.5) {
-					const ymin = detection_boxes[i][0];
-					const xmin = detection_boxes[i][1];
-					const ymax = detection_boxes[i][2];
-					const xmax = detection_boxes[i][3];
+				scores.push([detection_scores[i], i]);
 
-					//normalizing coordinates to fit the image
-					const x = xmin * imageRef.current.width;
-					const width = xmax * imageRef.current.width - x;
-					const y = ymin * imageRef.current.height;
-					const height = ymax * imageRef.current.height - y;
+				const ymin = detection_boxes[i][0];
+				const xmin = detection_boxes[i][1];
+				const ymax = detection_boxes[i][2];
+				const xmax = detection_boxes[i][3];
 
-					const classType = detection_classes[i];
-					const score = detection_scores[i];
+				//normalizing coordinates to fit the image
+				const x = xmin * imageRef.current.width;
+				const width = xmax * imageRef.current.width - x;
+				const y = ymin * imageRef.current.height;
+				const height = ymax * imageRef.current.height - y;
 
-					predss.push({ x, y, width, height, classType, score });
-				}
+				const classType = detection_classes[i];
+				const score = detection_scores[i];
+
+				predss.push({ x, y, width, height, classType, score });
 			}
 
-			setPreds(predss);
+			scores.sort((a, b) => b[0] - a[0]);
+
+			const predsss = [];
+			for (let i = 0; i < Math.min(2, predss.length); i++) {
+				console.log('predss[i] : ', predss[i]);
+				predsss.push(predss[scores[i][1]]);
+			}
+
+			setPreds(predsss);
 		}
 	};
 
@@ -219,8 +231,9 @@ export default function Home() {
 						Doing this is <b>ESSENTIAL</b> and will make sure that
 						the project can access the backend withour encountering
 						CORS-related issues.
-						<br/>
-						Do not forget to <b>TURN IT OFF </b> afterwards as it can cause security lapses on your part.
+						<br />
+						Do not forget to <b>TURN IT OFF </b> afterwards as it
+						can cause security lapses on your part.
 					</h1>
 				</div>
 				<div className='flex justify-end space-x-10'>
