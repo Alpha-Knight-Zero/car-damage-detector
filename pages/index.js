@@ -4,49 +4,6 @@ import * as tf from '@tensorflow/tfjs';
 import axios from 'axios';
 import styled from 'styled-components';
 
-const ObjectDetectorContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-`;
-
-const DetectorContainer = styled.div`
-	min-width: 200px;
-	height: 700px;
-	border: 3px solid #fff;
-	border-radius: 5px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-`;
-
-const TargetImg = styled.img`
-	height: 100%;
-`;
-
-const HiddenFileInput = styled.input`
-	display: none;
-`;
-
-const SelectButton = styled.button`
-	padding: 7px 10px;
-	border: 2px solid transparent;
-	background-color: #fff;
-	color: #0a0f22;
-	font-size: 16px;
-	font-weight: 500;
-	outline: none;
-	margin-top: 2em;
-	cursor: pointer;
-	transition: all 260ms ease-in-out;
-	&:hover {
-		background-color: transparent;
-		border: 2px solid #fff;
-		color: #fff;
-	}
-`;
-
 const TargetBox = styled.div`
 	position: absolute;
 	left: ${({ x }) => x + 'px'};
@@ -72,6 +29,7 @@ export default function Home() {
 	const [isResultLoading, setIsResultLoading] = useState(false);
 	const [isProcessingImage, setIsProcessingImage] = useState(false);
 	const [imageUrl, setImageUrl] = useState('');
+	const [predictionsReady, setPredictionsReady] = useState(false);
 
 	const imageRef = useRef();
 
@@ -89,7 +47,7 @@ export default function Home() {
 		setIsProcessingImage(true);
 
 		const imgTensor = tf.browser.fromPixels(imageRef.current);
-		imgTensor = imgTensor.resizeBilinear([224, 224]);
+		imgTensor = imgTensor.resizeBilinear([640, 640]);
 
 		const imgTensorArray = imgTensor.arraySync();
 
@@ -128,14 +86,15 @@ export default function Home() {
 	};
 
 	const showDetections = (predictions) => {
-		if (predictions.length > 0) {
-			const {
-				num_detections,
-				detection_scores,
-				detection_boxes,
-				detection_classes,
-			} = predictions;
+		setPredictionsReady(true);
+		const {
+			num_detections,
+			detection_scores,
+			detection_boxes,
+			detection_classes,
+		} = predictions;
 
+		if (num_detections > 0) {
 			// console.log('Num detections : ', num_detections);
 			// console.log('Detection scores : ', detection_scores);
 			// console.log('Detection boxes : ', detection_boxes);
@@ -148,39 +107,57 @@ export default function Home() {
 			<Head>
 				<title>Car Damage Detector - by Pushkal Pandey</title>
 			</Head>
-			<div className='space-y-8 text-4xl text-center'>
-				<h1>Car Damage Detector</h1>
-			</div>
-			<div className='inputHolder'>
-				<input
-					type='file'
-					accept='image/*'
-					capture='camera'
-					className='inputUpload'
-					onChange={uploadImage}
-				></input>
-			</div>
-			<div className='mainWrappper'>
-				<div class='mainContent'>
-					<div className='flex col-span-4 imageHolder'>
-						<div>
-							{imageUrl && (
-								<img
-									src={imageUrl}
-									alt='Upload Preview'
-									crossOrigin='anonymous'
-									ref={imageRef}
-								/>
-							)}
-						</div>
-					</div>
+			<div className='flex flex-col items-center col-span-4 space-y-8'>
+				<div className='items-center justify-center space-y-8 text-4xl text-center'>
+					<h1>Car Damage Detector</h1>
 				</div>
+				<div className='relative flex items-center w-auto h-auto rounded border-y-2 border-x-2 justify-items-center'>
+					{imageUrl && (
+						<img
+							src={imageUrl}
+							ref={imageRef}
+							height='640'
+							width='640'
+							alt='Uploaded Umage Preview'
+							crossOrigin='anonymous'
+						/>
+					)}
+					{/* {predictionsReady &&
+						predictions.map((prediction, idx) => (
+							<TargetBox
+								key={idx}
+								x={prediction.bbox[0]}
+								y={prediction.bbox[1]}
+								width={prediction.bbox[2]}
+								height={prediction.bbox[3]}
+								classType={prediction.class}
+								score={prediction.score * 100}
+							/>
+						))} */}
+				</div>
+				<form>
+					<label class='block'>
+						<span class='sr-only'>Choose Image</span>
+						<input
+							type='file'
+							accept='image/*'
+							class='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
+							onChange={uploadImage}
+						/>
+					</label>
+				</form>
 				{imageUrl && (
 					<button
-						className='px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700'
 						onClick={processImage}
+						className='px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700'
 					>
-						Detect Damage
+						{isProcessingImage
+							? 'Processing Image'
+							: isResultLoading
+							? 'Fetching Results'
+							: predictionsReady
+							? 'Preparing Results'
+							: 'Detect Damage'}
 					</button>
 				)}
 			</div>
