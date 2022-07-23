@@ -219,21 +219,6 @@ export default function Home() {
 						</div>
 					</nav>
 				</div>
-				<div>
-					<h1>
-						This website requires that you install the{' '}
-						<b>Moesif Origin & CORS Changer</b> web extension on
-						your browser from the Chrome Web Store and then{' '}
-						<b>Turn it ON</b>.
-						<br />
-						Doing this is <b>ESSENTIAL</b> and will make sure that
-						the project can access the backend withour encountering
-						CORS-related issues.
-						<br />
-						Do not forget to <b>TURN IT OFF </b> afterwards as it
-						can cause security lapses on your part.
-					</h1>
-				</div>
 				<div className='flex justify-end space-x-10'>
 					{imageUrl && (
 						<button
