@@ -77,7 +77,7 @@ export default function Home() {
 		let headers = { 'content-type': 'application/json' };
 
 		let url =
-			'https://car-damage-detection1.herokuapp.com/v1/models/car_model:predict';
+			'https://cors-proxy-flask.herokuapp.com/predict';
 
 		await axios
 			.request({
