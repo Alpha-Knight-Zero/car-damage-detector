@@ -159,19 +159,9 @@ export default function Home() {
 		<div>
 			<Head>
 				<title>Car Damage Detector - by Pushkal Pandey</title>
-					<meta
-						name='description'
-						content="A free website managed by Pushkal Pandey (IIIT Pune 2020-2024) that can detect and classify 4 types of car damages on a picture of a car."
-						/>
-					<meta
-						name='keywords'
-						content='Pushkal Pandey,Web development,fullstack,IIIT Pune , Pushkal ,Pandey , car damage detection ,car damage classification , AI car damage , car damage machine learning,car damage deep learning,free car damage detection, free'
-					 '
-					/>
-					<meta 
-						name="google-site-verification" 
-						content="Mo84Ww3PrAZSxGRrtPvkl4DnOeOTmYQB7HBgUehR5lM" 
-					/>
+					<meta name='description' content="A free website managed by Pushkal Pandey (IIIT Pune 2020-2024) that can detect and classify 4 types of car damages on a picture of a car." />
+					<meta name='keywords' content='Pushkal Pandey,Web development,fullstack,IIIT Pune , Pushkal ,Pandey , car damage detection ,car damage classification , AI car damage , car damage machine learning,car damage deep learning,free car damage detection, free'' />
+					<meta name="google-site-verification" content="Mo84Ww3PrAZSxGRrtPvkl4DnOeOTmYQB7HBgUehR5lM" />
 			</Head>
 			<div className='flex flex-col items-center col-span-4 space-y-8'>
 				<div>
