@@ -4,4 +4,6 @@ You can also run this on your local machine by following the instructions given 
 
 
 A demonstration of how this website works id given by a live example shown in the clip below.
+
+
 ![](https://github.com/Alpha-Knight-Zero/car-damage-detector/blob/main/Animation.gif)
