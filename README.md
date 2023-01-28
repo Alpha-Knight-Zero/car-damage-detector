@@ -7,4 +7,4 @@ The backend used is the Open-Source REST API for Car Damage Detection (developed
 A demonstration of how this website works id given by a live example shown in the clip below.
 
 
-![](https://github.com/Alpha-Knight-Zero/car-damage-detector/blob/main/Animation.gif)
+![car-damage-detector.vercel.app Gif](https://github.com/Alpha-Knight-Zero/car-damage-detector/blob/main/Animation.gif)
